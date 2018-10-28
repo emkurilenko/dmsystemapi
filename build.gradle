@@ -1,0 +1,24 @@
+group 'com.kurilenko'
+version '1.0-SNAPSHOT'
+
+apply plugin: "war"
+war {
+    baseName = 'SpringMVC'
+    version = '1.0.0-BUILD-SNAPSHOT'
+}
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+mainClassName = 'com.kurilenko.dmsystemapi.Main'
+
+repositories {
+    jcenter()
+}
+dependencies {
+    compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper', version: '8.0.47'
+    compile group: 'org.springframework', name: 'spring-webmvc', version: '5.0.1.RELEASE'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.2'
+}
