@@ -5,6 +5,8 @@ import org.apache.catalina.startup.Tomcat;
 import java.io.File;
 import java.io.IOException;
 
+//web: java -jar build/server/webapp-runner-*.jar build/libs/*.war
+
 public class Main {
     private static final int PORT = 8080;
 
