@@ -1,1 +1,1 @@
-web: ./build/install/api/bin/dmsystemapi
+web: ./build/install/dmsystemapi/bin/dmsystemapi
