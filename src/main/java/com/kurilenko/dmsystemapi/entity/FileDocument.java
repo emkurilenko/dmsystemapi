@@ -3,14 +3,16 @@ package com.kurilenko.dmsystemapi.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Date;
+import java.util.UUID;
 
 @Data
 
 @Entity
 @Table(name = "file_document")
-public class FileDocument {
+public class FileDocument implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +29,7 @@ public class FileDocument {
 
     @Lob
     @Column(name = "file_content")
-    private ByteBuffer fileContent;
+    private byte[] fileContent;
 
     @Column(name = "description")
     private String description;

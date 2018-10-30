@@ -16,4 +16,10 @@ public class NewFileDocument {
     private String description;
 
     private MultipartFile file;
+
+    public NewFileDocument(@Length(max = 255) String name, @Length(max = 1024) String description, MultipartFile file) {
+        this.name = name;
+        this.description = description;
+        this.file = file;
+    }
 }

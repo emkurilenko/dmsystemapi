@@ -5,19 +5,19 @@ import com.kurilenko.dmsystemapi.dto.NewFileDocument;
 import com.kurilenko.dmsystemapi.entity.FileDocument;
 import com.kurilenko.dmsystemapi.exceptions.FileNotFoundException;
 import com.kurilenko.dmsystemapi.exceptions.UnsupportedContentType;
-import com.kurilenko.dmsystemapi.repository.FileDocumentRepositpry;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 @Service
 public interface FileDocumentService {
-    void createNewFileDocument(@Valid NewFileDocument newFileDocument)  throws UnsupportedContentType;
+    Long createNewFileDocument(@Valid NewFileDocument newFileDocument)  throws UnsupportedContentType;
 
     FileDocumentDTO getFileDocumentDTO(Long id) throws FileNotFoundException;
 
-    FileDocument getFileDocument(Long id) throws FileNotFoundException ;
-
+    FileDocument getFileDocument(Long id) throws FileNotFoundException;
+    FileDocument getFileDocumentForName(String fileName) throws FileNotFoundException;
     void deleteFile(Long id);
 
 

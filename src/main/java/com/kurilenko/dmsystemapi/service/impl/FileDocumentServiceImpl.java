@@ -6,49 +6,47 @@ import com.kurilenko.dmsystemapi.entity.ContentType;
 import com.kurilenko.dmsystemapi.entity.FileDocument;
 import com.kurilenko.dmsystemapi.exceptions.FileNotFoundException;
 import com.kurilenko.dmsystemapi.exceptions.UnsupportedContentType;
-import com.kurilenko.dmsystemapi.repository.FileDocumentRepositpry;
+import com.kurilenko.dmsystemapi.repository.FileDocumentRepository;
 import com.kurilenko.dmsystemapi.service.FileDocumentService;
-import com.kurilenko.dmsystemapi.service.TikaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 public class FileDocumentServiceImpl implements FileDocumentService {
 
     @Autowired
-    private FileDocumentRepositpry fileDocumentRepositpry;
+    private FileDocumentRepository fileDocumentRepository;
 
-    @Autowired
-    private TikaService tikaService;
-
-    private ContentType getContentType(byte[] file) throws UnsupportedContentType {
-        String contentType = tikaService.detectMediaType(file);
-        return ContentType.fromName(contentType).orElseThrow(() -> new UnsupportedContentType(contentType));
+    private ContentType getContentType(MultipartFile file) throws UnsupportedContentType {
+        return ContentType.fromName(file.getContentType()).orElseThrow(() -> new UnsupportedContentType(file.getContentType()));
     }
 
     @Override
-    public void createNewFileDocument(@Valid NewFileDocument newFileDocument) throws UnsupportedContentType {
+    public Long createNewFileDocument(@Valid NewFileDocument newFileDocument) throws UnsupportedContentType {
         FileDocument fileDocument = new FileDocument();
         fileDocument.setName(newFileDocument.getName());
         fileDocument.setDescription(newFileDocument.getDescription());
         try {
-            fileDocument.setContentType(getContentType(newFileDocument.getFile().getBytes()));
-            ByteBuffer content = ByteBuffer.wrap(newFileDocument.getFile().getBytes());
-            fileDocument.setFileContent(content);
+            fileDocument.setContentType(getContentType(newFileDocument.getFile()));
+            fileDocument.setFileContent(newFileDocument.getFile().getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         fileDocument.setCreationDate(new Date());
+        fileDocument = fileDocumentRepository.save(fileDocument);
+        return fileDocument.getId();
     }
 
     @Override
     public FileDocumentDTO getFileDocumentDTO(Long id) throws FileNotFoundException {
-        FileDocument fileDocument = fileDocumentRepositpry.findById(id).orElseThrow(() -> new FileNotFoundException(id.toString()));
+        FileDocument fileDocument = fileDocumentRepository.findById(id).orElseThrow(() -> new FileNotFoundException(id.toString()));
 
         return new FileDocumentDTO(
                 fileDocument.getId(),
@@ -61,11 +59,16 @@ public class FileDocumentServiceImpl implements FileDocumentService {
 
     @Override
     public FileDocument getFileDocument(Long id) throws FileNotFoundException {
-        return fileDocumentRepositpry.findById(id).orElseThrow(() -> new FileNotFoundException(id.toString()));
+        return fileDocumentRepository.findById(id).orElseThrow(() -> new FileNotFoundException(id.toString()));
+    }
+
+    @Override
+    public FileDocument getFileDocumentForName(String fileName) throws FileNotFoundException {
+        return fileDocumentRepository.findByName(fileName).orElseThrow(() -> new FileNotFoundException(fileName));
     }
 
     @Override
     public void deleteFile(Long id) {
-        fileDocumentRepositpry.deleteById(id);
+        fileDocumentRepository.deleteById(id);
     }
 }
