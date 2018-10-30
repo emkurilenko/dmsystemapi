@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -62,9 +63,13 @@ public class FileDocumentServiceImpl implements FileDocumentService {
         return fileDocumentRepository.findById(id).orElseThrow(() -> new FileNotFoundException(id.toString()));
     }
 
+
+    //Грубый костыль! Exception вылитает
     @Override
     public FileDocument getFileDocumentForName(String fileName) throws FileNotFoundException {
-        return fileDocumentRepository.findByName(fileName).orElseThrow(() -> new FileNotFoundException(fileName));
+        return fileDocumentRepository.findAll()
+                .stream().filter(s->s.getName().contains(fileName)).findAny()
+                .orElseThrow(() -> new FileNotFoundException(fileName));
     }
 
     @Override
