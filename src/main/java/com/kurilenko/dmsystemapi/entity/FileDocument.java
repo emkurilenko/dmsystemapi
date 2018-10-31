@@ -1,6 +1,7 @@
 package com.kurilenko.dmsystemapi.entity;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -25,11 +26,11 @@ public class FileDocument implements Serializable {
     private ContentType contentType;
 
     @Column(name = "creation_date")
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
     private Date creationDate;
 
-    @Lob
-    @Column(name = "file_content")
-    private byte[] fileContent;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private File file;
 
     @Column(name = "description")
     private String description;

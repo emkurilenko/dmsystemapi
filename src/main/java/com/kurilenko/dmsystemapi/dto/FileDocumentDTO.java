@@ -2,6 +2,7 @@ package com.kurilenko.dmsystemapi.dto;
 
 import lombok.NonNull;
 import lombok.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -16,5 +17,6 @@ public class FileDocumentDTO {
     String contentType, extension;
 
     @NonNull
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
     Date creationDate;
 }

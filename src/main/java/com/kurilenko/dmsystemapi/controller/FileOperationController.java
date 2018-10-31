@@ -1,5 +1,6 @@
 package com.kurilenko.dmsystemapi.controller;
 
+import com.kurilenko.dmsystemapi.dto.FileDocumentDTO;
 import com.kurilenko.dmsystemapi.dto.NewFileDocument;
 import com.kurilenko.dmsystemapi.entity.FileDocument;
 import com.kurilenko.dmsystemapi.exceptions.FileNotFoundException;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.List;
 import java.util.UUID;
 
 @CrossOrigin(origins = "*")
@@ -39,6 +41,10 @@ public class FileOperationController {
         return new FileSystemResource();
     }*/
 
+    @GetMapping
+    public List<FileDocumentDTO> getFileList(){
+        return fileDocumentService.getAllFiles();
+    }
 
     @RequestMapping(value="/{fileName}", method = RequestMethod.GET)
     public void downloadFile(HttpServletResponse response,
@@ -56,9 +62,9 @@ public class FileOperationController {
         /* "Content-Disposition : attachment" will be directly download, may provide save as popup, based on your browser setting*/
         //response.setHeader("Content-Disposition", String.format("inline; filename=\"%s\"", file.getName()));
 
-        response.setContentLength(fileDocument.getFileContent().length);
+        response.setContentLength(fileDocument.getFile().getFile().length);
 
-        InputStream inputStream = new ByteArrayInputStream(fileDocument.getFileContent());
+        InputStream inputStream = new ByteArrayInputStream(fileDocument.getFile().getFile());
 
         //Copy bytes from source to destination(outputstream in this example), closes both streams.
         FileCopyUtils.copy(inputStream, response.getOutputStream());
