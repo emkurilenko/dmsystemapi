@@ -23,6 +23,12 @@ import javax.servlet.annotation.MultipartConfig;
 @ComponentScan(basePackages = {"com.kurilenko.dmsystemapi"})
 public class SpringAppConfig implements WebApplicationInitializer {
 
+    private static final long MAX_FILE_SIZE = 1024 * 1024 * 5;
+
+    private static final long MAX_REQUEST_SIZE = 1024 * 1024 * 5;
+
+    private static final int FILE_SIZE_THRESHOLD = 0;
+
     @Override
     public void onStartup(ServletContext container) {
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
@@ -37,8 +43,9 @@ public class SpringAppConfig implements WebApplicationInitializer {
 
     @Bean
     public MultipartConfigElement multipartConfigElement() {
-        return new MultipartConfigElement("");
+        return new MultipartConfigElement("", MAX_FILE_SIZE, MAX_REQUEST_SIZE, FILE_SIZE_THRESHOLD);
     }
+
 
     @Bean
     public MultipartResolver multipartResolver() {
