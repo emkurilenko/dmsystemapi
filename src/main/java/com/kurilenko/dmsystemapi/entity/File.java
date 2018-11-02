@@ -19,7 +19,7 @@ public class File implements Serializable {
 
     @Column(name = "file_name", length = 200)
     @NotNull
-    private String name;
+    private String fileName;
 
     @Column(name = "content_type")
     @NotNull
