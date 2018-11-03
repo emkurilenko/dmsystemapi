@@ -1,14 +1,14 @@
 package com.kurilenko.dmsystemapi.service;
 
-import com.kurilenko.dmsystemapi.dto.TagDTO;
+import com.kurilenko.dmsystemapi.dto.TagDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public interface TagService {
-    Long saveTag(TagDTO tagDTO);
+    Long saveTag(TagDto tagDTO);
     void deleteTag(Long id);
-    TagDTO getTag(Long id);
-    List<TagDTO> getTags();
+    TagDto getTag(Long id);
+    List<TagDto> getTags();
 }

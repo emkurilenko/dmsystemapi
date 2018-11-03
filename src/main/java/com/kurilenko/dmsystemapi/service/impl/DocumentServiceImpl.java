@@ -1,14 +1,18 @@
 package com.kurilenko.dmsystemapi.service.impl;
 
-import com.kurilenko.dmsystemapi.dto.DocumentDTO;
-import com.kurilenko.dmsystemapi.dto.NewDocumentDTO;
+import com.kurilenko.dmsystemapi.dto.ContentTypeDto;
+import com.kurilenko.dmsystemapi.dto.DocumentDto;
+import com.kurilenko.dmsystemapi.dto.NewDocumentDto;
+import com.kurilenko.dmsystemapi.dto.TagDto;
 import com.kurilenko.dmsystemapi.entity.ContentType;
 import com.kurilenko.dmsystemapi.entity.Document;
 import com.kurilenko.dmsystemapi.entity.Tag;
+import com.kurilenko.dmsystemapi.exception.DocumentNotFoundException;
 import com.kurilenko.dmsystemapi.exception.UnsupportedContentType;
 import com.kurilenko.dmsystemapi.repository.DocumentRepository;
 import com.kurilenko.dmsystemapi.service.DocumentService;
 import com.kurilenko.dmsystemapi.service.TagService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +22,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
@@ -28,33 +33,36 @@ public class DocumentServiceImpl implements DocumentService {
     @Autowired
     private TagService tagService;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     private ContentType getContentType(MultipartFile file) throws UnsupportedContentType {
         return ContentType.fromName(file.getContentType()).orElseThrow(() -> new UnsupportedContentType(file.getContentType()));
     }
 
     @Override
-    public Long saveDocument(NewDocumentDTO newDocumentDTO) throws UnsupportedContentType {
+    public Long saveDocument(NewDocumentDto newDocumentDto) throws UnsupportedContentType {
         Document document = new Document();
-        document.setDescription(newDocumentDTO.getDescription());
-        document.setPublisher(newDocumentDTO.getPublisher());
-        if (newDocumentDTO.getCreationDate() == null) {
+        document.setDescription(newDocumentDto.getDescription());
+        document.setPublisher(newDocumentDto.getPublisher());
+        if (newDocumentDto.getCreationDate() == null) {
             document.setCreationDate(new Date());
         } else {
-            document.setCreationDate(newDocumentDTO.getCreationDate());
+            document.setCreationDate(newDocumentDto.getCreationDate());
         }
 
-        document.setFileName(newDocumentDTO.getFile().getOriginalFilename());
-        document.setContentType(getContentType(newDocumentDTO.getFile()));
+        document.setFileName(newDocumentDto.getFile().getOriginalFilename());
+        document.setContentType(getContentType(newDocumentDto.getFile()));
         try {
-            document.setContent(newDocumentDTO.getFile().getBytes());
+            document.setContent(newDocumentDto.getFile().getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        if (newDocumentDTO.getTags() != null) {
+        if (newDocumentDto.getTags() != null) {
             Set<Tag> tags = new HashSet<>();
             for (String var :
-                    newDocumentDTO.getTags()) {
+                    newDocumentDto.getTags()) {
                 Tag newTag = new Tag();
                 newTag.setName(var);
                 tags.add(newTag);
@@ -74,12 +82,23 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public DocumentDTO getDocument(Long id) {
-        return null;
+    public DocumentDto getDocument(Long id) throws DocumentNotFoundException{
+        Document doc = documentRepository.findById(id).orElseThrow(() -> new DocumentNotFoundException(id.toString()));
+        DocumentDto documentDto = new DocumentDto();
+        documentDto.setDescription(doc.getDescription());
+        documentDto.setPublisher(doc.getPublisher());
+        documentDto.setCreationDate(doc.getCreationDate());
+        documentDto.setId(doc.getId());
+        documentDto.setFileName(doc.getFileName());
+        documentDto.setContentType(new ContentTypeDto(doc.getContentType().getExtension(), doc.getContentType().getMimeType()));
+
+        //Set<TagDto> tags = doc.getTags().stream().map(tag -> modelMapper.map(tag, TagDto.class)).collect(Collectors.toSet());
+        documentDto.setTags(null);
+        return documentDto;
     }
 
     @Override
-    public List<DocumentDTO> getDocuments() {
+    public List<DocumentDto> getDocuments() {
         return null;
     }
 

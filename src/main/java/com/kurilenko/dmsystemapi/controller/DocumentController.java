@@ -1,8 +1,8 @@
 package com.kurilenko.dmsystemapi.controller;
 
-import com.kurilenko.dmsystemapi.dto.DocumentDTO;
-import com.kurilenko.dmsystemapi.dto.NewDocumentDTO;
-import com.kurilenko.dmsystemapi.dto.TagDTO;
+import com.kurilenko.dmsystemapi.dto.DocumentDto;
+import com.kurilenko.dmsystemapi.dto.NewDocumentDto;
+import com.kurilenko.dmsystemapi.exception.DocumentNotFoundException;
 import com.kurilenko.dmsystemapi.exception.UnsupportedContentType;
 import com.kurilenko.dmsystemapi.service.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/document/")
@@ -29,15 +28,27 @@ public class DocumentController {
                                                   @RequestParam(name = "creationDate", required = false) Date creationDate,
                                                   @RequestParam(name = "file") MultipartFile file,
                                                   @RequestParam(value = "tags[]", required = false) List<String> tags) throws UnsupportedContentType {
+        NewDocumentDto newDocumentDto = new NewDocumentDto();
+        newDocumentDto.setPublisher(publisher);
+        newDocumentDto.setDescription(description);
+        newDocumentDto.setFile(file);
+        newDocumentDto.setCreationDate(creationDate);
+        newDocumentDto.setTags(tags);
 
-        NewDocumentDTO newDocumentDTO = new NewDocumentDTO();
-        newDocumentDTO.setPublisher(publisher);
-        newDocumentDTO.setDescription(description);
-        newDocumentDTO.setFile(file);
-        newDocumentDTO.setCreationDate(creationDate);
-        newDocumentDTO.setTags(tags);
-
-        Long id = documentService.saveDocument(newDocumentDTO);
+        Long id = documentService.saveDocument(newDocumentDto);
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
+
+    @DeleteMapping(value = {"id"})
+    public ResponseEntity<?> deleteDocument(@PathVariable("id") Long id){
+        documentService.deleteDocument(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping(value = "{id}")
+    public ResponseEntity<DocumentDto> getDocument(@PathVariable("id") Long id) throws DocumentNotFoundException {
+        DocumentDto documentDTO = documentService.getDocument(id);
+        return new ResponseEntity<>(documentDTO, HttpStatus.OK);
+    }
+
 }

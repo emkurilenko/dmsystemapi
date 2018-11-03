@@ -19,14 +19,14 @@ public enum ContentType {
     EXCEL_2007_SPREADSHEET("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "xlsx");
 
     @NonNull
-    private String name;
+    private String mimeType;
 
     @NonNull
     private String extension;
 
-    public static Optional<ContentType> fromName(String name) {
+    public static Optional<ContentType> fromName(String mimeType) {
         return Stream.of(values())
-                .filter(contentType -> contentType.getName().equals(name))
+                .filter(contentType -> contentType.getMimeType().equals(mimeType))
                 .findFirst();
     }
 }

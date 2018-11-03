@@ -10,11 +10,12 @@ import java.util.Set;
 @Data
 
 @NoArgsConstructor
-public class DocumentDTO extends FileDTO{
+public class TagDto {
+    @NonNull
+    Long id;
 
-    String description;
+    @NonNull
+    String name;
 
-    String publisher;
-
-    String[] tags;
+    Set<DocumentDto> documents;
 }

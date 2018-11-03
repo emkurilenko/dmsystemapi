@@ -5,17 +5,18 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Value;
 
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Data
 
 @NoArgsConstructor
-public class TagDTO {
+public class DocumentDto extends FileDto{
     @NonNull
-    Long id;
+    String description;
 
-    @NonNull
-    String name;
+    @NotNull
+    String publisher;
 
-    Set<DocumentDTO> documents;
+    Set<TagDto> tags;
 }

@@ -1,6 +1,6 @@
 package com.kurilenko.dmsystemapi.service.impl;
 
-import com.kurilenko.dmsystemapi.dto.TagDTO;
+import com.kurilenko.dmsystemapi.dto.TagDto;
 import com.kurilenko.dmsystemapi.entity.Tag;
 import com.kurilenko.dmsystemapi.repository.TagRepository;
 import com.kurilenko.dmsystemapi.service.TagService;
@@ -16,7 +16,7 @@ public class TagServiceImpl implements TagService {
     private TagRepository tagRepository;
 
     @Override
-    public Long saveTag(TagDTO tagDTO) {
+    public Long saveTag(TagDto tagDTO) {
         Tag tag = new Tag();
         tag.setName(tagDTO.getName());
         //tag.setDocuments(tagDTO.getDocuments());
@@ -30,12 +30,12 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public TagDTO getTag(Long id) {
+    public TagDto getTag(Long id) {
         return null;
     }
 
     @Override
-    public List<TagDTO> getTags() {
+    public List<TagDto> getTags() {
         return null;
     }
 }

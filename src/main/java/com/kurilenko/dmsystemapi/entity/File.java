@@ -29,7 +29,7 @@ public abstract class File implements Serializable {
     private Date creationDate;
 
     @Lob
-   // @Basic(fetch = FetchType.LAZY)
+    @Basic(fetch = FetchType.LAZY)
     @NotNull
     private byte[] content;
 }

@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 
 @NoArgsConstructor
-public class NewDocumentDTO {
+public class NewDocumentDto {
     MultipartFile file;
     String publisher;
     String description;
