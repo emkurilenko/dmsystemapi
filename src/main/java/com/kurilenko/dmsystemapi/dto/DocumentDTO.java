@@ -1,24 +1,20 @@
 package com.kurilenko.dmsystemapi.dto;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Value;
 
 import java.util.Set;
 
-@Value
-public class DocumentDTO {
-    @NonNull
-    Long id;
+@Data
 
-    @NonNull
-    String title;
+@NoArgsConstructor
+public class DocumentDTO extends FileDTO{
 
     String description;
 
-    @NonNull
     String publisher;
 
-    FileDTO file;
-
-    Set<TagDTO> tags;
+    String[] tags;
 }

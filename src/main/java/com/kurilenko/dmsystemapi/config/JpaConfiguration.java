@@ -50,23 +50,6 @@ public class JpaConfiguration {
     }
 
     @Bean
-    public LocalSessionFactoryBean sessionFactoryBean(){
-        LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
-        sessionFactoryBean.setDataSource(dataSource());
-        sessionFactoryBean.setPackagesToScan(new String[]{"com.kurilenko.dmsystemapi.entity"});
-        sessionFactoryBean.setHibernateProperties(jpaProperties());
-        return sessionFactoryBean;
-    }
-
-    @Bean
-    @Autowired
-    public HibernateTransactionManager transactionManager(SessionFactory s) {
-        HibernateTransactionManager txManager = new HibernateTransactionManager();
-        txManager.setSessionFactory(s);
-        return txManager;
-    }
-
-    @Bean
     public JpaVendorAdapter jpaVendorAdapter() {
         HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
         return hibernateJpaVendorAdapter;

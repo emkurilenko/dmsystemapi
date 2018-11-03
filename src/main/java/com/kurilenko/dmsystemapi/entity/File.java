@@ -9,9 +9,8 @@ import java.util.Date;
 
 @Data
 
-@Entity
-@Table(name = "file_table")
-public class File implements Serializable {
+@MappedSuperclass
+public abstract class File implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,8 +32,4 @@ public class File implements Serializable {
    // @Basic(fetch = FetchType.LAZY)
     @NotNull
     private byte[] content;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "document_id")
-    private Document document;
 }
