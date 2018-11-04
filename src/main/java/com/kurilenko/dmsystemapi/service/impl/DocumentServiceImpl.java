@@ -10,21 +10,22 @@ import com.kurilenko.dmsystemapi.entity.Tag;
 import com.kurilenko.dmsystemapi.exception.DocumentNotFoundException;
 import com.kurilenko.dmsystemapi.exception.UnsupportedContentType;
 import com.kurilenko.dmsystemapi.repository.DocumentRepository;
+import com.kurilenko.dmsystemapi.repository.TagRepository;
 import com.kurilenko.dmsystemapi.service.DocumentService;
 import com.kurilenko.dmsystemapi.service.TagService;
+import org.hibernate.SessionFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class DocumentServiceImpl implements DocumentService {
 
     @Autowired
@@ -60,16 +61,16 @@ public class DocumentServiceImpl implements DocumentService {
         }
 
         if (newDocumentDto.getTags() != null) {
-            Set<Tag> tags = new HashSet<>();
             for (String var :
                     newDocumentDto.getTags()) {
-                Tag newTag = new Tag();
-                newTag.setName(var);
-                tags.add(newTag);
+                Tag newTag = tagService.getTagByName(var).orElseGet(() -> {
+                    Tag tag = new Tag();
+                    tag.setName(var);
+                    return tag;
+                });
+                document.getTags().add(newTag);
+                tagService.saveTagWithDocument(newTag);
             }
-            document.setTags(tags);
-        } else {
-            document.setTags(null);
         }
         document = documentRepository.save(document);
 
@@ -82,7 +83,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public DocumentDto getDocument(Long id) throws DocumentNotFoundException{
+    public DocumentDto getDocument(Long id) throws DocumentNotFoundException {
         Document doc = documentRepository.findById(id).orElseThrow(() -> new DocumentNotFoundException(id.toString()));
         DocumentDto documentDto = new DocumentDto();
         documentDto.setDescription(doc.getDescription());

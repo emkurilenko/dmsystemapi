@@ -5,10 +5,12 @@ import com.kurilenko.dmsystemapi.dto.NewDocumentDto;
 import com.kurilenko.dmsystemapi.exception.DocumentNotFoundException;
 import com.kurilenko.dmsystemapi.exception.UnsupportedContentType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+
 public interface DocumentService {
     Long saveDocument(NewDocumentDto newDocumentDTO) throws UnsupportedContentType;
     void deleteDocument(Long id);

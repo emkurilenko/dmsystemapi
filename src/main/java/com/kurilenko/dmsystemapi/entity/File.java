@@ -1,6 +1,7 @@
 package com.kurilenko.dmsystemapi.entity;
 
 import lombok.Data;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -10,6 +11,8 @@ import java.util.Date;
 @Data
 
 @MappedSuperclass
+
+
 public abstract class File implements Serializable {
 
     @Id
