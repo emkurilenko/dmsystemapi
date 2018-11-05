@@ -4,7 +4,6 @@ import com.kurilenko.dmsystemapi.dto.TagDto;
 import com.kurilenko.dmsystemapi.entity.Tag;
 import com.kurilenko.dmsystemapi.exception.TagNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;

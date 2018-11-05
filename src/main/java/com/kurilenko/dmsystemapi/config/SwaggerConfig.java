@@ -25,7 +25,6 @@ public class SwaggerConfig {
                     .build();
         }
 
-        // Describe your apis
         private ApiInfo apiInfo() {
             return new ApiInfoBuilder()
                     .title("DMS APIs")
@@ -34,7 +33,6 @@ public class SwaggerConfig {
                     .build();
         }
 
-        // Only select apis that matches the given Predicates.
         private Predicate<String> paths() {
             // Match all paths except /error
             return Predicates.and(

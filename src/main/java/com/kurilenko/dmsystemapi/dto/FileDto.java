@@ -1,15 +1,13 @@
 package com.kurilenko.dmsystemapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Value;
+import lombok.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 
 @NoArgsConstructor
 public abstract class FileDto {
