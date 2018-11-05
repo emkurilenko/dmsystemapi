@@ -1,22 +1,26 @@
 package com.kurilenko.dmsystemapi.dto;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Value;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
-@Value
-public class FileDocumentDTO {
+@Data
+@NoArgsConstructor
+public abstract class FileDTO {
     @NonNull
     Long id;
-    @NonNull
-    String name;
 
     @NonNull
-    String contentType, extension;
+    String fileName;
 
     @NonNull
-    @DateTimeFormat(pattern = "dd.MM.yyyy")
+    ContentTypeDTO contentType;
+
+    @NonNull
     Date creationDate;
+
+    byte[] content;
 }

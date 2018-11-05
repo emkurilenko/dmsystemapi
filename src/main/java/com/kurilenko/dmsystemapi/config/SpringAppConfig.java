@@ -1,5 +1,6 @@
 package com.kurilenko.dmsystemapi.config;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,12 @@ import javax.servlet.annotation.MultipartConfig;
 @ComponentScan(basePackages = {"com.kurilenko.dmsystemapi"})
 public class SpringAppConfig implements WebApplicationInitializer {
 
+    private static final long MAX_FILE_SIZE = 1024 * 1024 * 5;
+
+    private static final long MAX_REQUEST_SIZE = 1024 * 1024 * 5;
+
+    private static final int FILE_SIZE_THRESHOLD = 0;
+
     @Override
     public void onStartup(ServletContext container) {
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
@@ -36,14 +43,20 @@ public class SpringAppConfig implements WebApplicationInitializer {
     }
 
     @Bean
-    public MultipartConfigElement multipartConfigElement() {
-        return new MultipartConfigElement("");
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
+
+    @Bean
+    public MultipartConfigElement multipartConfigElement() {
+        return new MultipartConfigElement("", MAX_FILE_SIZE, MAX_REQUEST_SIZE, FILE_SIZE_THRESHOLD);
+    }
+
 
     @Bean
     public MultipartResolver multipartResolver() {
         org.springframework.web.multipart.commons.CommonsMultipartResolver multipartResolver = new org.springframework.web.multipart.commons.CommonsMultipartResolver();
-        multipartResolver.setMaxUploadSize(1000000);
+        multipartResolver.setMaxUploadSize(MAX_FILE_SIZE);
         return multipartResolver;
     }
 }

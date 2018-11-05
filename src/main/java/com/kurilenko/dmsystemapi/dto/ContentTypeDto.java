@@ -3,6 +3,6 @@ package com.kurilenko.dmsystemapi.dto;
 import lombok.Value;
 
 @Value
-public class ContentTypeDTO {
+public class ContentTypeDto {
     String extension, mimeType;
 }
