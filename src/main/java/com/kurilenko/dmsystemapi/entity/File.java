@@ -1,6 +1,10 @@
 package com.kurilenko.dmsystemapi.entity;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
@@ -8,11 +12,10 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 
 @MappedSuperclass
-
-
 public abstract class File implements Serializable {
 
     @Id
@@ -27,6 +30,13 @@ public abstract class File implements Serializable {
     @NotNull
     private ContentType contentType;
 
+
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
+    @Column(name = "update_date")
+    @NonNull
+    private Date updateDate;
+
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
     @Column(name = "creation_date")
     @NotNull
     private Date creationDate;

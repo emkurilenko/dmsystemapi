@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.*;
 
 @Getter
@@ -13,7 +14,7 @@ import java.util.*;
 @Entity
 @Table(name = "tag_table")
 @NoArgsConstructor
-public class Tag {
+public class Tag  implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

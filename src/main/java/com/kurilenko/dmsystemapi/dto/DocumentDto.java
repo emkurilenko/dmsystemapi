@@ -1,5 +1,6 @@
 package com.kurilenko.dmsystemapi.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.*;
 

@@ -46,6 +46,31 @@ public class DocumentController {
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
+
+    @PostMapping(value = "{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Long> updateDocument(@PathVariable Long id,
+                                               @RequestParam(name = "description", required = false) String description,
+                                               @RequestParam(name = "publisher", required = false) String publisher,
+                                               @RequestParam(name = "creationDate", required = false) Date creationDate,
+                                               @RequestParam(name = "file", required = false) MultipartFile file,
+                                               @RequestParam(value = "tags[]", required = false) List<String> tags) throws DocumentNotFoundException, UnsupportedContentType, StreamReaderException {
+        if(tags != null) {
+            System.out.println("NOT NULL");
+        }else {
+            System.out.println("NULL");
+        }
+        NewDocumentDto newDocumentDto = new NewDocumentDto();
+        newDocumentDto.setId(id);
+        newDocumentDto.setPublisher(publisher);
+        newDocumentDto.setDescription(description);
+        newDocumentDto.setFile(file);
+        newDocumentDto.setCreationDate(creationDate);
+        newDocumentDto.setTags(tags);
+        System.out.println("update");
+        Long responseId = documentService.updateDocument(newDocumentDto);
+        return new ResponseEntity<>(responseId, HttpStatus.OK);
+    }
+
     @DeleteMapping(value = "{id}")
     public ResponseEntity<?> deleteDocument(@PathVariable("id") Long id) throws DocumentNotFoundException {
         documentService.deleteDocument(id);
@@ -64,10 +89,10 @@ public class DocumentController {
         return new ResponseEntity<>(documentDtoList, HttpStatus.OK);
     }
 
-    @GetMapping(value = "download/{fileName:.+}")
+    @GetMapping(value = "download/{id}")
     public void downloadFile(HttpServletResponse response,
-                             @PathVariable("fileName") String fileName) throws DocumentNotFoundException, StreamReaderException {
-        FileContentDto documentDto = documentService.getDocumentContent(fileName);
+                             @PathVariable("id") Long id) throws DocumentNotFoundException, StreamReaderException {
+        FileContentDto documentDto = documentService.getDocumentContent(id);
         response.setContentType(documentDto.getContentType().getExtension());
         response.setHeader("Content-Disposition", String.format("attachment; filename=\"" + documentDto.getFileName() + "." +
                 documentDto.getContentType().getExtension() + "\""));
@@ -81,7 +106,7 @@ public class DocumentController {
         InputStream inputStream = new ByteArrayInputStream(documentDto.getContent());
         try {
             FileCopyUtils.copy(inputStream, response.getOutputStream());
-        }catch (IOException e){
+        } catch (IOException e) {
             throw new StreamReaderException(documentDto.getFileName());
         }
     }

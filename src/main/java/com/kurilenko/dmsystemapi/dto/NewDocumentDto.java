@@ -11,9 +11,11 @@ import java.util.List;
 
 @NoArgsConstructor
 public class NewDocumentDto {
+    Long id;
     MultipartFile file;
     String publisher;
     String description;
     List<String> tags;
     Date creationDate;
+    Date updateDate;
 }

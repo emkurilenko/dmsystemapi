@@ -25,4 +25,7 @@ public abstract class FileDto {
 
     @NonNull
     private Date creationDate;
+
+    @NonNull
+    private Date updateDate;
 }

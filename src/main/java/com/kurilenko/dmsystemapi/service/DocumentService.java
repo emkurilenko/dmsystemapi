@@ -7,7 +7,6 @@ import com.kurilenko.dmsystemapi.exception.DocumentNotFoundException;
 import com.kurilenko.dmsystemapi.exception.StreamReaderException;
 import com.kurilenko.dmsystemapi.exception.UnsupportedContentType;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,7 +16,7 @@ public interface DocumentService {
     Long saveDocument(NewDocumentDto newDocumentDTO) throws UnsupportedContentType, StreamReaderException;
     void deleteDocument(Long id) throws DocumentNotFoundException;
     DocumentDto getDocument(Long id) throws DocumentNotFoundException;
-    FileContentDto getDocumentContent(String fileName) throws DocumentNotFoundException;
+    FileContentDto getDocumentContent(Long id) throws DocumentNotFoundException;
     List<DocumentDto> getDocuments();
-    Long updateDocument(NewDocumentDto newDocumentDto) throws UnsupportedContentType, StreamReaderException;
+    Long updateDocument(NewDocumentDto newDocumentDto) throws DocumentNotFoundException, UnsupportedContentType, StreamReaderException;
 }

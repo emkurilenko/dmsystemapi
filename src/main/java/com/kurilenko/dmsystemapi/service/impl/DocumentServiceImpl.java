@@ -1,7 +1,5 @@
 package com.kurilenko.dmsystemapi.service.impl;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.kurilenko.dmsystemapi.dto.*;
 import com.kurilenko.dmsystemapi.entity.ContentType;
 import com.kurilenko.dmsystemapi.entity.Document;
@@ -10,10 +8,8 @@ import com.kurilenko.dmsystemapi.exception.DocumentNotFoundException;
 import com.kurilenko.dmsystemapi.exception.StreamReaderException;
 import com.kurilenko.dmsystemapi.exception.UnsupportedContentType;
 import com.kurilenko.dmsystemapi.repository.DocumentRepository;
-import com.kurilenko.dmsystemapi.repository.TagRepository;
 import com.kurilenko.dmsystemapi.service.DocumentService;
 import com.kurilenko.dmsystemapi.service.TagService;
-import org.hibernate.SessionFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,8 +48,10 @@ public class DocumentServiceImpl implements DocumentService {
         document.setPublisher(newDocumentDto.getPublisher());
         if (newDocumentDto.getCreationDate() == null) {
             document.setCreationDate(new Date());
+            document.setUpdateDate(new Date());
         } else {
             document.setCreationDate(newDocumentDto.getCreationDate());
+            document.setUpdateDate(newDocumentDto.getCreationDate());
         }
         document.setFileName(newDocumentDto.getFile().getOriginalFilename());
         document.setContentType(getContentType(newDocumentDto.getFile()));
@@ -67,32 +67,34 @@ public class DocumentServiceImpl implements DocumentService {
                 return tag;
             });
             document.getTags().add(newTag);
-            tagService.saveTagWithDocument(newTag);
+            tagService.saveTag(newTag);
         });
         return documentRepository.save(document).getId();
     }
 
 
     @Override
+    @Transactional
     public void deleteDocument(Long id) throws DocumentNotFoundException {
         Document document = documentRepository.findById(id).orElseThrow(() -> new DocumentNotFoundException(id.toString()));
         documentRepository.delete(document); //Как лучше удалять по entity или по ID? Или все зависит от ситуации?
     }
 
     @Override
+    @Transactional(readOnly = true)
     public DocumentDto getDocument(Long id) throws DocumentNotFoundException {
         Document doc = documentRepository.findById(id).orElseThrow(() -> new DocumentNotFoundException(id.toString()));
         return convertToDto(doc);
     }
 
     @Override
-    public FileContentDto getDocumentContent(String fileName) throws DocumentNotFoundException {
-        Document doc = documentRepository.findByFileName(fileName).orElseThrow(() -> new DocumentNotFoundException(fileName));
+    public FileContentDto getDocumentContent(Long id) throws DocumentNotFoundException {
+        Document doc = documentRepository.findById(id).orElseThrow(() -> new DocumentNotFoundException(id.toString()));
         return convertToDtoContent(doc);
     }
 
 
-    private FileContentDto convertToDtoContent(Document document){
+    private FileContentDto convertToDtoContent(Document document) {
         FileContentDto fileContent = new FileContentDto();
         fileContent.setContent(document.getContent());
         fileContent.setContentType(new ContentTypeDto(document.getContentType().getExtension(), document.getContentType().getMimeType()));
@@ -119,6 +121,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DocumentDto> getDocuments() {
         List<DocumentDto> list = new ArrayList<>();
         documentRepository.findAll().forEach(var -> list.add(convertToDto(var)));
@@ -126,7 +129,30 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Long updateDocument() {
-        return null;
+    public Long updateDocument(NewDocumentDto documentDto) throws DocumentNotFoundException, UnsupportedContentType, StreamReaderException {
+        Document doc = documentRepository.findById(documentDto.getId()).orElseThrow(() -> new DocumentNotFoundException(documentDto.getId().toString()));
+        doc.setUpdateDate(new Date());
+        doc.setPublisher(documentDto.getPublisher());
+        doc.setDescription(documentDto.getDescription());
+        if (documentDto.getFile() != null) {
+            doc.setFileName(documentDto.getFile().getOriginalFilename());
+            doc.setContentType(getContentType(documentDto.getFile()));
+            try {
+                doc.setContent(documentDto.getFile().getBytes());
+            } catch (IOException e) {
+                throw new StreamReaderException(doc.getFileName());
+            }
+        }
+        doc.getTags().clear();
+        documentDto.getTags().forEach(var -> {
+            Tag newTag = tagService.getTagByName(var).orElseGet(() -> {
+                Tag tag = new Tag();
+                tag.setName(var);
+                return tag;
+            });
+            doc.getTags().add(newTag);
+            tagService.saveTag(newTag);
+        });
+        return documentRepository.save(doc).getId();
     }
 }
