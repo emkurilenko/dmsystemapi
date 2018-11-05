@@ -67,12 +67,8 @@ public class DocumentController {
     @GetMapping(value = "download/{fileName:.+}")
     public void downloadFile(HttpServletResponse response,
                              @PathVariable("fileName") String fileName) throws DocumentNotFoundException, StreamReaderException {
-
         FileContentDto documentDto = documentService.getDocumentContent(fileName);
         response.setContentType(documentDto.getContentType().getExtension());
-
-        /* "Content-Disposition : inline" will show viewable types [like images/text/pdf/anything viewable by browser] right on browser
-            while others(zip e.g) will be directly downloaded [may provide save as popup, based on your browser setting.]*/
         response.setHeader("Content-Disposition", String.format("attachment; filename=\"" + documentDto.getFileName() + "." +
                 documentDto.getContentType().getExtension() + "\""));
 
@@ -83,14 +79,11 @@ public class DocumentController {
         response.setContentLength(documentDto.getContent().length);
 
         InputStream inputStream = new ByteArrayInputStream(documentDto.getContent());
-
-        //Copy bytes from source to destination(outputstream in this example), closes both streams.
         try {
             FileCopyUtils.copy(inputStream, response.getOutputStream());
         }catch (IOException e){
             throw new StreamReaderException(documentDto.getFileName());
         }
-
     }
 
 

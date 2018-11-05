@@ -19,5 +19,5 @@ public interface DocumentService {
     DocumentDto getDocument(Long id) throws DocumentNotFoundException;
     FileContentDto getDocumentContent(String fileName) throws DocumentNotFoundException;
     List<DocumentDto> getDocuments();
-    Long updateDocument();
+    Long updateDocument(NewDocumentDto newDocumentDto) throws UnsupportedContentType, StreamReaderException;
 }
