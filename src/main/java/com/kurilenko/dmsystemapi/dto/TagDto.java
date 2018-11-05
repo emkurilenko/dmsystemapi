@@ -1,21 +1,24 @@
 package com.kurilenko.dmsystemapi.dto;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Value;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 
 @NoArgsConstructor
 public class TagDto {
     @NonNull
     Long id;
 
+
     @NonNull
     String name;
 
-    Set<DocumentDto> documents;
+    @JsonIgnore
+    Set<DocumentDto> documents = new HashSet<>();
 }

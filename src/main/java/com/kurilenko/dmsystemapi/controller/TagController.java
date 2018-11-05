@@ -19,8 +19,8 @@ public class TagController {
     @PostMapping
     public ResponseEntity<Long> createTag(@RequestParam(value = "name") String name) {
         TagDto tagDTO = new TagDto();
-        tagDTO.setName(name);
-        Long id = tagService.saveTag(tagDTO);
+       // tagDTO.setName(name);
+        Long id = 0L;//tagService.saveTag(tagDTO);
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
 

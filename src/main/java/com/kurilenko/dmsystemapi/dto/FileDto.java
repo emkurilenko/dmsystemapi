@@ -1,5 +1,6 @@
 package com.kurilenko.dmsystemapi.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -12,8 +13,6 @@ import java.util.Date;
 
 @NoArgsConstructor
 public abstract class FileDto {
-    private static final SimpleDateFormat dateFormat =
-            new SimpleDateFormat("dd-MM-yyyy");
     @NonNull
     private Long id;
 
@@ -21,6 +20,7 @@ public abstract class FileDto {
     private String fileName;
 
     @NonNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private ContentTypeDto contentType;
 
     @NonNull

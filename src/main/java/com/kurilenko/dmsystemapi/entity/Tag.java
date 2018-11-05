@@ -22,21 +22,17 @@ public class Tag {
     @Column(name = "tag_name")
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "tags")
-    private Set<Document> documents = new HashSet<>();
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "tags")
+     private Set<Document> documents = new HashSet<>();
 
-    public Tag(@NotNull String name) {
-        this.name = name;
+    @Override
+    public String toString() {
+        return "Tag{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 
-
-    /*public void addDoc(Document document){
-        if(!documents.contains(document)){
-            documents.add(document);
-            document.addTag(this);
-        }
-    }
-*/
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

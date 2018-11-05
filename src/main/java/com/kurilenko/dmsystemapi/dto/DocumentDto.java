@@ -1,14 +1,14 @@
 package com.kurilenko.dmsystemapi.dto;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Value;
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 
 @NoArgsConstructor
 public class DocumentDto extends FileDto{
@@ -18,5 +18,6 @@ public class DocumentDto extends FileDto{
     @NotNull
     String publisher;
 
-    Set<TagDto> tags;
+    Set<TagDto> tags = new HashSet<>();
+
 }
