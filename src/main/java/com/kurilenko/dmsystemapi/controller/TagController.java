@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/tag/")
 public class TagController {

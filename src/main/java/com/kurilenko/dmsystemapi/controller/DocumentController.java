@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
+@CrossOrigin(allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/document/")
 public class DocumentController {
@@ -54,11 +55,6 @@ public class DocumentController {
                                                @RequestParam(name = "creationDate", required = false) Date creationDate,
                                                @RequestParam(name = "file", required = false) MultipartFile file,
                                                @RequestParam(value = "tags[]", required = false) List<String> tags) throws DocumentNotFoundException, UnsupportedContentType, StreamReaderException {
-        if(tags != null) {
-            System.out.println("NOT NULL");
-        }else {
-            System.out.println("NULL");
-        }
         NewDocumentDto newDocumentDto = new NewDocumentDto();
         newDocumentDto.setId(id);
         newDocumentDto.setPublisher(publisher);
@@ -66,7 +62,6 @@ public class DocumentController {
         newDocumentDto.setFile(file);
         newDocumentDto.setCreationDate(creationDate);
         newDocumentDto.setTags(tags);
-        System.out.println("update");
         Long responseId = documentService.updateDocument(newDocumentDto);
         return new ResponseEntity<>(responseId, HttpStatus.OK);
     }
