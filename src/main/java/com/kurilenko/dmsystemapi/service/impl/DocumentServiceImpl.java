@@ -61,6 +61,7 @@ public class DocumentServiceImpl implements DocumentService {
             throw new StreamReaderException(document.getFileName());
         }
         newDocumentDto.getTags().forEach(var -> {
+            /*
             Tag newTag = tagService.getTagByName(var).orElseGet(() -> {
                 Tag tag = new Tag();
                 tag.setName(var);
@@ -68,6 +69,8 @@ public class DocumentServiceImpl implements DocumentService {
             });
             document.getTags().add(newTag);
             tagService.saveTag(newTag);
+            */
+            document.getTags().add(tagService.saveTag(var));
         });
         return documentRepository.save(document).getId();
     }
@@ -145,14 +148,15 @@ public class DocumentServiceImpl implements DocumentService {
         }
         doc.getTags().clear();
         documentDto.getTags().forEach(var -> {
-            Tag newTag = tagService.getTagByName(var).orElseGet(() -> {
-                Tag tag = new Tag();
-                tag.setName(var);
-                return tag;
-            });
-            doc.getTags().add(newTag);
-            tagService.saveTag(newTag);
+            doc.getTags().add(tagService.saveTag(var));
         });
         return documentRepository.save(doc).getId();
+    }
+
+    @Override
+    public Long attacheTag(TagForDocDTO tagForDocDTO) throws DocumentNotFoundException {
+        Document document = documentRepository.findById(tagForDocDTO.getIdDoc()).orElseThrow(() -> new DocumentNotFoundException(tagForDocDTO.getIdDoc().toString()));
+        document.getTags().add(tagService.saveTag(tagForDocDTO.getNameTag()));
+        return documentRepository.save(document).getId();
     }
 }

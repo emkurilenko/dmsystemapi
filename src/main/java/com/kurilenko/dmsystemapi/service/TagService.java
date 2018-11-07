@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface TagService {
     Long saveTag(TagDto tagDto);
-    Long saveTag(Tag tag);
+    Tag saveTag(String name);
     Optional<Tag> getTagByName(String name);
     void deleteTag(Long id) throws TagNotFoundException;
     TagDto getTag(Long id) throws TagNotFoundException;
