@@ -12,7 +12,7 @@ import java.util.Date;
 @Setter
 
 @NoArgsConstructor
-public abstract class FileDto {
+abstract class FileDto {
     @NonNull
     private Long id;
 
