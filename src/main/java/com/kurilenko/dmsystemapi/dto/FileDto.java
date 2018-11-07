@@ -22,11 +22,9 @@ public abstract class FileDto {
     @NonNull
     private ContentTypeDto contentType;
 
-    @NonNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date creationDate;
 
-    @NonNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateDate;
 }
