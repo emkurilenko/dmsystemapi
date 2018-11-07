@@ -12,7 +12,6 @@ import com.kurilenko.dmsystemapi.service.TagService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -33,15 +32,19 @@ public class TagServiceImpl implements TagService {
     private DocumentRepository documentRepository;
 
     @Override
-    public Long saveTag(Tag tag) {
-        Tag tag1 = tagRepository.save(tag);
-        return tag1.getId();
-    }
-
-    @Override
     public Long saveTag(TagDto tagDto) {
         Tag tag1 = tagRepository.save(convertToEntity(tagDto));
         return tag1.getId();
+    }
+    @Override
+    public Tag saveTag(String name){
+        Tag newTag = getTagByName(name).orElseGet(() -> {
+            Tag tag = new Tag();
+            tag.setName(name);
+            return tag;
+        });
+        tagRepository.save(newTag);
+        return newTag;
     }
 
     @Override

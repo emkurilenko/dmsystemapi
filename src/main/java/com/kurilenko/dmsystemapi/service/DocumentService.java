@@ -3,6 +3,7 @@ package com.kurilenko.dmsystemapi.service;
 import com.kurilenko.dmsystemapi.dto.DocumentDto;
 import com.kurilenko.dmsystemapi.dto.FileContentDto;
 import com.kurilenko.dmsystemapi.dto.NewDocumentDto;
+import com.kurilenko.dmsystemapi.dto.TagForDocDTO;
 import com.kurilenko.dmsystemapi.exception.DocumentNotFoundException;
 import com.kurilenko.dmsystemapi.exception.StreamReaderException;
 import com.kurilenko.dmsystemapi.exception.UnsupportedContentType;
@@ -19,4 +20,6 @@ public interface DocumentService {
     FileContentDto getDocumentContent(Long id) throws DocumentNotFoundException;
     List<DocumentDto> getDocuments();
     Long updateDocument(NewDocumentDto newDocumentDto) throws DocumentNotFoundException, UnsupportedContentType, StreamReaderException;
+
+    Long attacheTag(TagForDocDTO tagForDocDTO) throws DocumentNotFoundException;
 }

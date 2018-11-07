@@ -1,8 +1,10 @@
 package com.kurilenko.dmsystemapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,7 +16,6 @@ import java.util.Set;
 public class TagDto {
     @NonNull
     Long id;
-
 
     @NonNull
     String name;

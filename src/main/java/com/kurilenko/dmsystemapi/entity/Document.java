@@ -16,7 +16,7 @@ import java.util.Set;
 public class Document extends File {
 
 
-    @Column(name = "description_doc", length = 4000)
+    @Column(name = "description_doc", length = 2500)
     private String description;
 
 
