@@ -10,6 +10,8 @@ import com.kurilenko.dmsystemapi.exception.TagNotFoundException;
 import com.kurilenko.dmsystemapi.exception.UnsupportedContentType;
 import com.kurilenko.dmsystemapi.service.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,11 +37,11 @@ public class DocumentController {
 
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Long> createNewDocument(@RequestParam(name = "description", required = false, defaultValue = "") String description,
-                                                  @RequestParam(name = "publisher", required = false, defaultValue = "user") String publisher,
+    public ResponseEntity<Long> createNewDocument(@RequestParam(name = "description") String description,
+                                                  @RequestParam(name = "publisher") String publisher,
                                                   @RequestParam(name = "creationDate", required = false) Date creationDate,
                                                   @RequestParam(name = "file") MultipartFile file,
-                                                  @RequestParam(value = "tags[]", required = false) Optional<List<String>> tags) throws UnsupportedContentType, StreamReaderException {
+                                                  @RequestParam(value = "tags[]") Optional<List<String>> tags) throws UnsupportedContentType, StreamReaderException {
         NewDocumentDto newDocumentDto = new NewDocumentDto();
         newDocumentDto.setPublisher(publisher);
         newDocumentDto.setDescription(description);
@@ -51,11 +53,15 @@ public class DocumentController {
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
+    @PutMapping
+    public ResponseEntity<?> updateDocument(@RequestBody DocumentDto document) throws DocumentNotFoundException{
+        Long id = documentService.updateDocument(document);
+        return new ResponseEntity<>(id, HttpStatus.OK);
+    }
+
     @PutMapping("attach/{id}")
     public ResponseEntity<?> attachTag(@PathVariable(value = "id") Long id,
                                         @RequestBody String tag) throws DocumentNotFoundException {
-        System.out.println(tag);
-        System.out.println(id);
         Long idDoc = documentService.attachTag(new TagForDocDTO(id, tag));
         return new ResponseEntity<>(idDoc, HttpStatus.OK);
     }
@@ -78,11 +84,18 @@ public class DocumentController {
         return new ResponseEntity<>(documentDtoList, HttpStatus.OK);
     }
 
+    @GetMapping("listPage")
+    public Page<DocumentDto> showPage(@RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "25") int size){
+        return documentService.getPage(new PageRequest(page, size));
+    }
+
     @GetMapping(value = "download/{id}")
     public void downloadFile(HttpServletResponse response,
                              @PathVariable("id") Long id) throws DocumentNotFoundException, StreamReaderException {
         FileContentDto documentDto = documentService.getDocumentContent(id);
         response.setContentType(documentDto.getContentType().getExtension());
+       // response.setHeader("Content-Disposition", String.format("inline; filename=\"%s\".\"%s\"", documentDto.getFileName(), documentDto.getContentType().getMimeType()));
         response.setHeader("Content-Disposition", String.format("inline; filename=\"%s\"", documentDto.getFileName()));
 
 

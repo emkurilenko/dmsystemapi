@@ -15,7 +15,6 @@ import java.util.Set;
 @Table(name = "document_table")
 public class Document extends File {
 
-
     @Column(name = "description_doc", length = 2500)
     private String description;
 

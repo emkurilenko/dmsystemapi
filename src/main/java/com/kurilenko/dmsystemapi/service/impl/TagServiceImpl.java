@@ -32,9 +32,8 @@ public class TagServiceImpl implements TagService {
     private DocumentRepository documentRepository;
 
     @Override
-    public Long saveTag(TagDto tagDto) {
-        Tag tag1 = tagRepository.save(convertToEntity(tagDto));
-        return tag1.getId();
+    public Tag saveTag(TagDto tagDto) {
+        return tagRepository.save(convertToEntity(tagDto));
     }
     @Override
     public Tag saveTag(String name){

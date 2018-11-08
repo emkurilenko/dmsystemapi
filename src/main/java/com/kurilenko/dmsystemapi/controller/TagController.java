@@ -22,7 +22,7 @@ public class TagController {
     public ResponseEntity<Long> createTag(@RequestParam(value = "name") String name) {
         TagDto tagDTO = new TagDto();
         tagDTO.setName(name);
-        Long id = tagService.saveTag(tagDTO);
+        Long id = tagService.saveTag(tagDTO).getId();
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
 

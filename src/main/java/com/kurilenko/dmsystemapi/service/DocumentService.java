@@ -8,6 +8,8 @@ import com.kurilenko.dmsystemapi.exception.DocumentNotFoundException;
 import com.kurilenko.dmsystemapi.exception.StreamReaderException;
 import com.kurilenko.dmsystemapi.exception.TagNotFoundException;
 import com.kurilenko.dmsystemapi.exception.UnsupportedContentType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,8 +22,11 @@ public interface DocumentService {
     DocumentDto getDocument(Long id) throws DocumentNotFoundException;
     FileContentDto getDocumentContent(Long id) throws DocumentNotFoundException;
     List<DocumentDto> getDocuments();
-    Long updateDocument(NewDocumentDto newDocumentDto) throws DocumentNotFoundException, UnsupportedContentType, StreamReaderException;
+    Long updateDocument(DocumentDto documentDto) throws DocumentNotFoundException;
 
     Long attachTag(TagForDocDTO tagForDocDTO) throws DocumentNotFoundException;
     Long unfastenTag(TagForDocDTO tagForDocDTO) throws DocumentNotFoundException, TagNotFoundException;
+
+
+    Page<DocumentDto> getPage(PageRequest pageRequest);
 }
