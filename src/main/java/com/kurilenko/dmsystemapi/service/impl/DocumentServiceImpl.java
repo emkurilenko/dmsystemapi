@@ -6,6 +6,7 @@ import com.kurilenko.dmsystemapi.entity.Document;
 import com.kurilenko.dmsystemapi.entity.Tag;
 import com.kurilenko.dmsystemapi.exception.DocumentNotFoundException;
 import com.kurilenko.dmsystemapi.exception.StreamReaderException;
+import com.kurilenko.dmsystemapi.exception.TagNotFoundException;
 import com.kurilenko.dmsystemapi.exception.UnsupportedContentType;
 import com.kurilenko.dmsystemapi.repository.DocumentRepository;
 import com.kurilenko.dmsystemapi.service.DocumentService;
@@ -154,9 +155,18 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Long attacheTag(TagForDocDTO tagForDocDTO) throws DocumentNotFoundException {
+    public Long attachTag(TagForDocDTO tagForDocDTO) throws DocumentNotFoundException {
         Document document = documentRepository.findById(tagForDocDTO.getIdDoc()).orElseThrow(() -> new DocumentNotFoundException(tagForDocDTO.getIdDoc().toString()));
         document.getTags().add(tagService.saveTag(tagForDocDTO.getNameTag()));
         return documentRepository.save(document).getId();
+    }
+
+    @Override
+    public Long unfastenTag(TagForDocDTO tagForDocDTO) throws DocumentNotFoundException, TagNotFoundException {
+        System.out.println(tagForDocDTO.getNameTag());
+        System.out.println(tagForDocDTO.getIdDoc());
+        Document document = documentRepository.findById(tagForDocDTO.getIdDoc()).orElseThrow(() -> new DocumentNotFoundException(tagForDocDTO.getIdDoc().toString()));
+        document.getTags().remove(tagService.getTagByName(tagForDocDTO.getNameTag()).orElseThrow(() -> new TagNotFoundException(tagForDocDTO.getNameTag())));
+        return document.getId();
     }
 }

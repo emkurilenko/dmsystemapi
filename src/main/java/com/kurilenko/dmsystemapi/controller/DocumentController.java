@@ -6,6 +6,7 @@ import com.kurilenko.dmsystemapi.dto.NewDocumentDto;
 import com.kurilenko.dmsystemapi.dto.TagForDocDTO;
 import com.kurilenko.dmsystemapi.exception.DocumentNotFoundException;
 import com.kurilenko.dmsystemapi.exception.StreamReaderException;
+import com.kurilenko.dmsystemapi.exception.TagNotFoundException;
 import com.kurilenko.dmsystemapi.exception.UnsupportedContentType;
 import com.kurilenko.dmsystemapi.service.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,29 +51,12 @@ public class DocumentController {
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
-
-    @PostMapping(value = "{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Long> updateDocument(@PathVariable Long id,
-                                               @RequestParam(name = "description", required = false) String description,
-                                               @RequestParam(name = "publisher", required = false) String publisher,
-                                               @RequestParam(name = "creationDate", required = false) Date creationDate,
-                                               @RequestParam(name = "file", required = false) MultipartFile file,
-                                               @RequestParam(value = "tags[]", required = false) Optional<List<String>> tags) throws DocumentNotFoundException, UnsupportedContentType, StreamReaderException {
-        NewDocumentDto newDocumentDto = new NewDocumentDto();
-        newDocumentDto.setId(id);
-        newDocumentDto.setPublisher(publisher);
-        newDocumentDto.setDescription(description);
-        newDocumentDto.setFile(file);
-        newDocumentDto.setCreationDate(creationDate);
-        newDocumentDto.setTags(tags.orElse(new ArrayList<>()));
-        Long responseId = documentService.updateDocument(newDocumentDto);
-        return new ResponseEntity<>(responseId, HttpStatus.OK);
-    }
-
-    @PutMapping(value = "attache/{id}")
-    public ResponseEntity<?> attacheTag(@PathVariable("id") Long id,
-                                    @RequestParam(name = "tag") String tag) throws DocumentNotFoundException {
-        Long idDoc = documentService.attacheTag(new TagForDocDTO(id, tag));
+    @PutMapping("attach/{id}")
+    public ResponseEntity<?> attachTag(@PathVariable(value = "id") Long id,
+                                        @RequestBody String tag) throws DocumentNotFoundException {
+        System.out.println(tag);
+        System.out.println(id);
+        Long idDoc = documentService.attachTag(new TagForDocDTO(id, tag));
         return new ResponseEntity<>(idDoc, HttpStatus.OK);
     }
 
@@ -115,5 +99,12 @@ public class DocumentController {
         }
     }
 
+
+    @PutMapping("unfasten/{id}")
+    public ResponseEntity<?> unfastenTag(@PathVariable(value = "id") Long id,
+                                         @RequestBody String tag) throws DocumentNotFoundException, TagNotFoundException {
+        long idDoc = documentService.unfastenTag(new TagForDocDTO(id, tag));
+        return new ResponseEntity<>(idDoc, HttpStatus.OK);
+    }
 
 }
