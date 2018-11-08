@@ -56,7 +56,7 @@ public class DocumentServiceImpl implements DocumentService {
             document.setCreationDate(newDocumentDto.getCreationDate());
             document.setUpdateDate(newDocumentDto.getCreationDate());
         }
-        document.setFileName(newDocumentDto.getFile().getName());
+        document.setFileName(newDocumentDto.getFile().getOriginalFilename());
         document.setContentType(getContentType(newDocumentDto.getFile()));
         try {
             document.setContent(newDocumentDto.getFile().getBytes());
