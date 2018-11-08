@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 
 public interface TagService {
-    Long saveTag(TagDto tagDto);
+    Tag saveTag(TagDto tagDto);
     Tag saveTag(String name);
     Optional<Tag> getTagByName(String name);
     void deleteTag(Long id) throws TagNotFoundException;

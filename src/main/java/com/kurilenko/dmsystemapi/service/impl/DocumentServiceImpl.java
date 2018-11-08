@@ -6,12 +6,15 @@ import com.kurilenko.dmsystemapi.entity.Document;
 import com.kurilenko.dmsystemapi.entity.Tag;
 import com.kurilenko.dmsystemapi.exception.DocumentNotFoundException;
 import com.kurilenko.dmsystemapi.exception.StreamReaderException;
+import com.kurilenko.dmsystemapi.exception.TagNotFoundException;
 import com.kurilenko.dmsystemapi.exception.UnsupportedContentType;
 import com.kurilenko.dmsystemapi.repository.DocumentRepository;
 import com.kurilenko.dmsystemapi.service.DocumentService;
 import com.kurilenko.dmsystemapi.service.TagService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,7 +56,7 @@ public class DocumentServiceImpl implements DocumentService {
             document.setCreationDate(newDocumentDto.getCreationDate());
             document.setUpdateDate(newDocumentDto.getCreationDate());
         }
-        document.setFileName(newDocumentDto.getFile().getOriginalFilename());
+        document.setFileName(newDocumentDto.getFile().getName());
         document.setContentType(getContentType(newDocumentDto.getFile()));
         try {
             document.setContent(newDocumentDto.getFile().getBytes());
@@ -61,15 +64,6 @@ public class DocumentServiceImpl implements DocumentService {
             throw new StreamReaderException(document.getFileName());
         }
         newDocumentDto.getTags().forEach(var -> {
-            /*
-            Tag newTag = tagService.getTagByName(var).orElseGet(() -> {
-                Tag tag = new Tag();
-                tag.setName(var);
-                return tag;
-            });
-            document.getTags().add(newTag);
-            tagService.saveTag(newTag);
-            */
             document.getTags().add(tagService.saveTag(var));
         });
         return documentRepository.save(document).getId();
@@ -114,10 +108,6 @@ public class DocumentServiceImpl implements DocumentService {
         return documentDto;
     }
 
-    /*
-     * Костыль! Можно было использовать mapper и на свойство Set<Document> повесить анностацию @JsonIgnore
-     * Я так и сделал, но думаю что это не правильно
-     * */
     private TagDto convertToDto(Tag tag) {
         TagDto tagDto = modelMapper.map(tag, TagDto.class);
         return tagDto;
@@ -132,31 +122,31 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Long updateDocument(NewDocumentDto documentDto) throws DocumentNotFoundException, UnsupportedContentType, StreamReaderException {
+    public Long updateDocument(DocumentDto documentDto) throws DocumentNotFoundException {
         Document doc = documentRepository.findById(documentDto.getId()).orElseThrow(() -> new DocumentNotFoundException(documentDto.getId().toString()));
         doc.setUpdateDate(new Date());
         doc.setPublisher(documentDto.getPublisher());
         doc.setDescription(documentDto.getDescription());
-        if (documentDto.getFile() != null) {
-            doc.setFileName(documentDto.getFile().getOriginalFilename());
-            doc.setContentType(getContentType(documentDto.getFile()));
-            try {
-                doc.setContent(documentDto.getFile().getBytes());
-            } catch (IOException e) {
-                throw new StreamReaderException(doc.getFileName());
-            }
-        }
-        doc.getTags().clear();
-        documentDto.getTags().forEach(var -> {
-            doc.getTags().add(tagService.saveTag(var));
-        });
+        doc.setFileName(documentDto.getFileName());
         return documentRepository.save(doc).getId();
     }
 
     @Override
-    public Long attacheTag(TagForDocDTO tagForDocDTO) throws DocumentNotFoundException {
+    public Long attachTag(TagForDocDTO tagForDocDTO) throws DocumentNotFoundException {
         Document document = documentRepository.findById(tagForDocDTO.getIdDoc()).orElseThrow(() -> new DocumentNotFoundException(tagForDocDTO.getIdDoc().toString()));
         document.getTags().add(tagService.saveTag(tagForDocDTO.getNameTag()));
         return documentRepository.save(document).getId();
+    }
+
+    @Override
+    public Long unfastenTag(TagForDocDTO tagForDocDTO) throws DocumentNotFoundException, TagNotFoundException {
+        Document document = documentRepository.findById(tagForDocDTO.getIdDoc()).orElseThrow(() -> new DocumentNotFoundException(tagForDocDTO.getIdDoc().toString()));
+        document.getTags().remove(tagService.getTagByName(tagForDocDTO.getNameTag()).orElseThrow(() -> new TagNotFoundException(tagForDocDTO.getNameTag())));
+        return document.getId();
+    }
+
+    @Override
+    public Page<DocumentDto> getPage(PageRequest pageRequest) {
+        return documentRepository.findAll(pageRequest).map(var -> convertToDto(var));
     }
 }
